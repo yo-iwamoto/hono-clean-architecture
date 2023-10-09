@@ -1,13 +1,33 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-model Test {
-  id String @id @default(cuid())
+model Thread {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  title String
+
+  Comments Comment[]
+
+  @@map("threads")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  text String
+
+  threadId String @map("thread_id")
+  Thread   Thread @relation(fields: [threadId], references: [id])
+
+  @@map("comments")
 }
